@@ -5,6 +5,7 @@ require 'config.php';
 $events = [];
 $sql = "SELECT * FROM events ORDER BY event_date ASC LIMIT 6";
 $result = $conn->query($sql);
+
 if ($result && $result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $events[] = $row;
@@ -16,6 +17,7 @@ if ($result && $result->num_rows > 0) {
 <head>
     <meta charset="UTF-8">
     <title>College Event Management</title>
+    <link rel="stylesheet" href="style.css">
 
     <style>
         body { 
@@ -24,21 +26,16 @@ if ($result && $result->num_rows > 0) {
             background: #f8f8f8;
         }
 
-        /* Header */
         header {
             background: #0d47a1;
             color: white;
-            padding: 20px 0;     /* 🔥 Increased header height */
-        }
-
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
+            padding: 20px;
+            text-align: center;
         }
 
         nav a {
             color: white;
+            margin: 0 15px;
             text-decoration: none;
             font-size: 18px;
             font-weight: bold;
@@ -48,70 +45,33 @@ if ($result && $result->num_rows > 0) {
             color: yellow;
         }
 
-        /* Image Slider */
-        .slider {
-            width: 100%;
-            height: 350px;
-            overflow: hidden;
-            margin-top: 10px;
-            border-radius: 10px;
-        }
-        .slides {
-            width: 300%;
-            height: 100%;
-            display: flex;
-            animation: slideAnimation 12s infinite;
-        }
-        .slide {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        @keyframes slideAnimation {
-            0% { margin-left: 0; }
-            33% { margin-left: -100%; }
-            66% { margin-left: -200%; }
-            100% { margin-left: 0; }
-        }
-
-        /* Hero Section */
         .hero {
             text-align: center;
-            padding: 40px 0;
+            padding: 40px;
             background: white;
         }
-        .hero h1 {
-            margin: 0;
-            font-size: 36px;
-        }
-        .hero p {
-            font-size: 18px;
-            margin-top: 10px;
-        }
+
+        .hero h1 { font-size: 36px; margin: 0; }
+        .hero p { font-size: 18px; margin-top: 10px; }
+
         .btn {
             padding: 10px 20px;
-            color: white;
             background: #0d47a1;
+            color: white;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 16px;
-            margin-right: 10px;
-        }
-        .btn.alt {
-            background: #424242;
+            margin: 5px;
         }
 
-        /* Events */
-        .container {
+        .event-grid {
             width: 80%;
             margin: auto;
-            padding: 40px 0;
-        }
-        .event-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 20px;
+            padding: 30px 0;
         }
+
         .event-card {
             background: white;
             padding: 20px;
@@ -119,21 +79,12 @@ if ($result && $result->num_rows > 0) {
             box-shadow: 0 2px 6px rgba(0,0,0,0.15);
             text-align: center;
         }
-        .small-btn {
-            display: inline-block;
-            padding: 8px 15px;
-            background: #0d47a1;
-            color: white;
-            text-decoration: none;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
 
         footer {
             background: #0d47a1;
-            padding: 20px;
-            text-align: center;
+            padding: 15px;
             color: white;
+            text-align: center;
             margin-top: 30px;
         }
     </style>
@@ -147,48 +98,36 @@ if ($result && $result->num_rows > 0) {
         <a href="events.php">Events</a>
         <a href="admin_login.php">Admin</a>
         <a href="student_login.php">Student</a>
-        <a href="about.php">About</a>
-        <a href="contact.php">Contact</a>
     </nav>
 </header>
 
-<!-- 🔥 Image Slider Added -->
-<div class="slider">
-    <div class="slides">
-        <img src="images/slider1.jpg" class="slide">
-        <img src="images/slider2.jpg" class="slide">
-        <img src="images/slider3.jpg" class="slide">
-    </div>
-</div>
-
 <section class="hero">
-    <h1>Welcome Students & Admins</h1>
-    <p>Manage, Register & Stay Updated About College Events</p>
+    <h1>Welcome to College Event Management</h1>
+    <p>Register, manage, and explore events easily.</p>
+
     <a class="btn" href="student_register.php">Student Sign Up</a>
     <a class="btn" href="student_login.php">Student Login</a>
-    <a class="btn alt" href="admin_login.php">Admin Login</a>
+    <a class="btn" href="admin_login.php">Admin Login</a>
 </section>
 
-<section class="container">
-    <h2>Upcoming Events</h2>
+<h2 style="text-align:center;">Upcoming Events</h2>
 
-    <?php if (count($events) === 0): ?>
-        <p>No upcoming events yet.</p>
-    <?php else: ?>
-    <div class="event-grid">
-        <?php foreach($events as $e): ?>
-        <div class="event-card">
-            <h3><?= htmlspecialchars($e['title']) ?></h3>
-            <p><?= date('d M Y', strtotime($e['event_date'])) ?></p>
-            <a class="small-btn" href="events.php?event_id=<?= $e['id'] ?>">Details</a>
-        </div>
-        <?php endforeach; ?>
+<?php if (count($events) === 0): ?>
+    <p style="text-align:center;">No events found.</p>
+<?php else: ?>
+<div class="event-grid">
+    <?php foreach($events as $e): ?>
+    <div class="event-card">
+        <h3><?= htmlspecialchars($e['title']) ?></h3>
+        <p><?= date('d M Y', strtotime($e['event_date'])) ?></p>
+        <a class="btn" href="events.php?event_id=<?= $e['id'] ?>">Details</a>
     </div>
-    <?php endif; ?>
-</section>
+    <?php endforeach; ?>
+</div>
+<?php endif; ?>
 
 <footer>
-    <p>© <?= date('Y') ?> College Event Management System</p>
+    &copy; <?= date('Y'); ?> College Event Management System
 </footer>
 
 </body>
